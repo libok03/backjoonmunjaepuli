@@ -1,1 +1,50 @@
 
+#1043
+
+# 입력
+# 첫째 줄에 사람의 수 N과 파티의 수 M이 주어진다.
+# 둘째 줄에는 이야기의 진실을 아는 사람의 수와 번호가 주어진다. 진실을 아는 사람의 수가 먼저 주어지고
+#  그 개수만큼 사람들의 번호가 주어진다. 사람들의 번호는 1부터 N까지의 수로 주어진다.
+# 셋째 줄부터 M개의 줄에는 각 파티마다 오는 사람의 수와 번호가 같은 방식으로 주어진다.
+# N, M은 50 이하의 자연수이고, 진실을 아는 사람의 수는 0 이상 50 이하의 정수,
+#  파티마다 오는 사람의 수는 1 이상 50 이하의 정수이다.
+
+# 출력
+# 첫째 줄에 문제의 정답을 출력한다.
+import sys
+input= sys.stdin.readline
+
+# 여기는 인풋 받아주는 곳이다
+N,M= map(int, input().split())
+data =list(map(int,input().split()))
+knower = set(data[1:])
+graph=[]
+for i in range(M):
+    data=list(map(int,input().split()))
+    graph.append(set(data[1:]))
+
+
+# 이 줄부터, knower과 같이 이야기를 하는 숫자를 knower에 추가하기 위한 코드이다.
+# 처음에 knower과 관련된 부분이 나올 수도 있지만, 이후에 나올수도 있어서 일단은 앞으로 한번 뒤로 한번 테스트 했다.
+for i in graph:
+    if len(i & knower) >=1:
+        for j in i:
+            knower.add(j)
+
+for j in range(len(graph)):
+    if len(graph[M-j-1] & knower) >= 1:
+        for i in graph[M-j-1]:
+            knower.add(i)
+
+
+# 이줄 부터는 그래프를 하나씩 훑어보면서 답을 구하는 영역이다.
+cnt=0
+for i in graph:
+    if len(i & knower) >= 1:
+        continue
+    else: 
+        cnt+=1
+print(cnt)
+
+#에제는 다통과했지만, 문제에서 틀린 판정을 받았다. 아무래도 knower에 추가 할때 문제가 생긴거 같은데 
+#질문게시판에서 보면 union and find 라는 알고리즘을 사용하던데 나도 한번해봐야겠다.
