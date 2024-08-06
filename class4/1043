@@ -66,3 +66,38 @@ print(cnt)
 
 
 #아니 다중 union함수를 찾아봐야겠다 너무 번거롭다.
+
+
+
+# 번외
+import sys
+input= sys.stdin.readline
+
+
+N,M= map(int, input().split())
+data =list(map(int,input().split()))
+knower = set(data[1:])
+graph=[]
+for i in range(M):
+    data=list(map(int,input().split()))
+    graph.append(set(data[1:]))
+
+for k in range(M):
+    for i in graph:
+        if len(i & knower) >=1:
+            for j in i:
+                knower.add(j)
+
+
+
+
+cnt=0
+for i in graph:
+    if len(i & knower) >= 1:
+        continue
+    else:
+        cnt+=1
+print(cnt)
+
+#아니 그냥 처음 낸거에  M번 반복하면 그게 정답이었다.
+#나는 병신이다.
