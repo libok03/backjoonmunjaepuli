@@ -11,40 +11,58 @@
 
 # 출력
 # 첫째 줄에 문제의 정답을 출력한다.
-import sys
-input= sys.stdin.readline
+# import sys
+# input = sys.stdin.readline
 
-# 여기는 인풋 받아주는 곳이다
-N,M= map(int, input().split())
-data =list(map(int,input().split()))
-knower = set(data[1:])
+#find_parent함수를 통해서 부모 노드를 찾아준다.
+def find_parent(x):
+    if parents[x]!=x:
+        parents[x] =find_parent(parents[x])
+    return parents[x]
+
+#union 함수를 통해서 노드끼리 묶어준다(간선을 만들어준다!).
+def union(a,b):
+    if a<b:
+        parents[b]=a
+    else:
+        parents[a]=b
+
+
+# 인풋을 받아준다.
+N,M=map(int,input().split())
+
+knower=set(list(map(int,input().split()))[1:])
+
+parents=list(range(N+1))
+
 graph=[]
 for i in range(M):
-    data=list(map(int,input().split()))
-    graph.append(set(data[1:]))
+    data=list(map(int,input().split()))[1:]
+    graph.append(data)
 
-
-# 이 줄부터, knower과 같이 이야기를 하는 숫자를 knower에 추가하기 위한 코드이다.
-# 처음에 knower과 관련된 부분이 나올 수도 있지만, 이후에 나올수도 있어서 일단은 앞으로 한번 뒤로 한번 테스트 했다.
+# union함수를 통해서 노드끼리 간선을 만들어준다.
 for i in graph:
-    if len(i & knower) >=1:
-        for j in i:
-            knower.add(j)
-
-for j in range(len(graph)):
-    if len(graph[M-j-1] & knower) >= 1:
-        for i in graph[M-j-1]:
-            knower.add(i)
+    for j in i:
+        union(i[0],j)
 
 
-# 이줄 부터는 그래프를 하나씩 훑어보면서 답을 구하는 영역이다.
-cnt=0
+#knower의 부모노드를 저장한다.
+knower_parents=set()
+for i in knower:
+    knower_parents.add(find_parent(i))
+
+#정잡 구하기!
+cnt=M
 for i in graph:
-    if len(i & knower) >= 1:
-        continue
-    else: 
-        cnt+=1
+    temp=1
+    for j in i:
+        if find_parent(j) in knower_parents:
+            temp=0
+    if temp==0:
+        cnt-=1
+
+
 print(cnt)
 
-#에제는 다통과했지만, 문제에서 틀린 판정을 받았다. 아무래도 knower에 추가 할때 문제가 생긴거 같은데 
-#질문게시판에서 보면 union and find 라는 알고리즘을 사용하던데 나도 한번해봐야겠다.
+
+#아니 다중 union함수를 찾아봐야겠다 너무 번거롭다.
