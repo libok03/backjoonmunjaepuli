@@ -11,8 +11,11 @@
 # 첫째 줄에 두 개의 정점을 지나는 최단 경로의 길이를 출력한다. 그러한 경로가 없을 때에는 -1을 출력한다.
 
 
-from collections import deque
-# 정점과 간선 받아주기
+import heapq
+import sys
+input=sys.stdin.readline
+INF=int(1e9)
+
 N,E=map(int,input().split())
 
 graph= [[]for i in range(N+1)]
@@ -22,42 +25,39 @@ for i in range(E):
     graph[node2].append((node1,leng))
 
 
+def daykstra(start):
+    # 거리 저장용
+    dv=[INF] * (N+1)
+    dv[start]=0
+    # 우선순이 큐를 이용하여 (0,start)저장
+    priority_queue = [(0,start)]
+    # 우선순위 큐에서
+    while priority_queue:
+        # 가장 작은 수의 dist를 가지는 노드를 꺼내 와서
+        curr_dist, curr_node = heapq.heappop(priority_queue)
+        # 그 길이가 새로 만든 길이보다 작다면
+        if curr_dist > dv[curr_node]:
+            continue
 
-queue=deque()
-# 데이크스트라 함수 개설
-def daykstra(start, end):
-    #dv는 그 노드의 거리를 저장
-    dv=[1e9]*(N+1)
-    #방문 했는지에 대한것 저장
-    visited=[-1]*(N+1)
-    
-    dv[start] = 0
-    queue.append(start)
-    #BFS를 이용하여 풀기
-    while queue:
-        cnt_node = queue.popleft()
-        
-        for adj_node,adj_dist in graph[cnt_node]:
-            # 만약 방문하지 않았다면
-            if visited[adj_node] == -1:
-                #queue에 추가해주고
-                queue.append(adj_node)
-                #만약 거리가 더 적은게 계산되면 바꿔주고
-                if dv[adj_node] >  dv[cnt_node]+adj_dist:
-                    dv[adj_node]=dv[cnt_node]+adj_dist
-        visited[cnt_node]=1
-        # end에오면 return
-        if cnt_node == end:
-            return dv[end]
-        
+        # 그 노드의 이어진 그래프에서
+        for adj_node,adj_dist in graph[curr_node]:
+            distance = curr_dist + adj_dist
+            # 새로 구한 거리가 더 작다면
+            if distance < dv[adj_node]:
+                # 바꿔주고
+                dv[adj_node] = distance
+                # 우선 순위 큐에 집어넣기
+                heapq.heappush(priority_queue,(distance,adj_node))
+    return dv
 
-A,B = map(int,input().split())       
-print(daykstra(1,A))
-print(daykstra(1,B))
-print(daykstra(A,B))
-print(daykstra(N,A))
-print(daykstra(N,B))
+v1,v2 = map(int,input().split())
 
+origin_dist= daykstra(1)
+v1_dist=daykstra(v1)
+v2_dist=daykstra(v2)
+result = min((origin_dist[v1]+v1_dist[v2]+v2_dist[N]),(origin_dist[v2]+v2_dist[v1]+v1_dist[N]))
+print(result if result < INF else -1)
 
-# 으엑  틀렸다. 왜지?
-# 찾아보니 BFS가 아니라 힙이라는 자료구조로 풀던데 함 찾아봐야겠다.
+# 기존의 BFS로 풀었었는데 이 경우에는 방문 여부와 루트와 가까운 거리를 따로 찾아야 한다는 단점이 있었지만, 
+# 우선순위 큐를 사용 하니 덩ㄱ 쉽게 풀렸다.
+
