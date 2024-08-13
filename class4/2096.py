@@ -19,53 +19,28 @@
 # 첫째 줄에 얻을 수 있는 
 # 최대 점수와 최소 점수를 띄어서 출력한다.
 
-# import sys
-# input = sys.stdin.readline
-
-graph = []
-maps=[]
+import sys
+input = sys.stdin.readline
 
 # N 입력 받아주기
 N= int(input())
 
-
 # 그래프 받아주기
-for i in range(N):
-    data=list(map(int,input().split()))
-    # 확인해보니 그냥 data로 넣으면 상대 참조 되서 이상해짐
-    graph.append(data[:])
-    maps.append(data[:])
+data=list(map(int,input().split()))
+min_graph= data
+max_graph= data
 
-# max 구하는 함수
-def max_sum(graph):
-    # N동안 확인
-    for line in range(N):
-        # 각각의 열 확인
-        for columns in range(3):
-            if line != 0:
-                # 0, 1, 2 동안 확인해서 더 많은 혹은 적은 것으로 추가해주기
-                if columns == 0:
-                    graph[line][0]+= max(graph[line-1][0],graph[line-1][1])
-                elif columns == 1:
-                    graph[line][1]+= max(graph[line-1][0],graph[line-1][1],graph[line-1][2])
-                elif columns ==2:
-                    graph[line][2]+= max(graph[line-1][1],graph[line-1][2])
-    return max(graph[N-1])
+# 받아주면서 동시에 업데이트 해버리기 (이러면 메모리를 아낄 수 있다.)
+for i in range(N-1):
+    data = list(map(int,input().split()))
+    
+    max_graph=[(max((max_graph[0]),(max_graph[1]))+data[0]),
+                      (max(max_graph)+data[1]),
+                      (max((max_graph[1]),(max_graph[2]))+data[2])]
+    
+    min_graph=[(min((min_graph[0]),(min_graph[1]))+data[0]),
+                      (min(min_graph)+data[1]),
+                      (min((min_graph[1]),(min_graph[2]))+data[2])]
 
-# max_sum을 min함수만 넣어줌
-def min_sum(maps):
-    for line in range(N):
-        for columns in range(3):
-            if line != 0:
-                if columns == 0:
-                    maps[line][0]+= min(maps[line-1][0],maps[line-1][1])
-                elif columns == 1:
-                    maps[line][1]+= min(maps[line-1])
-                elif columns ==2:
-                    maps[line][2]+= min(maps[line-1][1],maps[line-1][2])
-        
-    return min(maps[N-1])
-
-print(maps)
-print(max_sum(graph),min_sum(maps))
+print(max(max_graph),min(min_graph))
 
