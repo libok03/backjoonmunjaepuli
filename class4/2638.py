@@ -23,6 +23,8 @@
 import sys
 input= sys.stdin.readline
 
+from collections import deque
+
 N, M = map(int,input().split())
 
 graph=[]
@@ -34,40 +36,56 @@ for i in range(N):
 def bfs(graph):
     dx=[1,-1,0,0]
     dy=[0,0,1,-1]
+    
     ans=0
     end_point = True
-    
     while end_point:
+        queue= deque()
+        queue.append((0,0))
+        graph[0][0]=3
+        while queue:
+            
+            cx,cy = queue.popleft()
+            
+            for i in range(4):
+                ax=cx+dx[i]
+                ay=cy+dy[i]
+                
+                if (0<=ax<N) and (0<=ay<M):
+                    if graph[ax][ay] == 0:
+                        graph[ax][ay]=3
+                        
+                        queue.append((ax,ay))
         melted=[]
         end_point = False
-        
+
         for cx in range(N):
             for cy in range(M):
-                
+                    
                 surface=0
-                
+                    
                 if graph[cx][cy]==1:
                     
                     end_point = True
-                    
+                        
                     for i in range(4):
                         
                         ax = cx+dx[i]
                         ay = cy+dy[i]
-                        
+                            
                         if (0<=ax<N) and (0<=ay<M):
                             
-                            if graph[ax][ay]==0:
+                            if graph[ax][ay]==3:
                                 surface+= 1
                     if surface >= 2:
                         melted.append((cx,cy))
         if not end_point:
             break
-        
+            
         for x,y in melted:
             graph[x][y]=0
-        
-        
+                
+                
         ans+=1
     return ans
 
