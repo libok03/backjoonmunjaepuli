@@ -26,67 +26,60 @@ input= sys.stdin.readline
 from collections import deque
 
 N, M = map(int,input().split())
-
+visited= [[False]*M for _ in range(N)]
+dx=[1,-1,0,0]
+dy=[0,0,1,-1]
 graph=[]
 for i in range(N):
     data=list(map(int,input().split()))
     graph.append(data)
-
-
-def bfs(graph):
-    dx=[1,-1,0,0]
-    dy=[0,0,1,-1]
+ans=0
+def outside():
+    queue= deque()
     
-    ans=0
-    end_point = True
-    while end_point:
-        queue= deque()
-        queue.append((0,0))
-        graph[0][0]=3
-        while queue:
+    out_visited = [[False]*M for i in range(N)]
+    queue.append((0,0))
+    out_visited[0][0]=True
+    graph[0][0]=-1
+    while queue:
+        y,x = queue.popleft()
+        for i in range(4):
+            ny = dy[i]+y
+            nx = dx[i]+x
             
-            cx,cy = queue.popleft()
-            
-            for i in range(4):
-                ax=cx+dx[i]
-                ay=cy+dy[i]
-                
-                if (0<=ax<N) and (0<=ay<M):
-                    if graph[ax][ay] == 0:
-                        graph[ax][ay]=3
-                        
-                        queue.append((ax,ay))
-        melted=[]
-        end_point = False
+            if (0<=ny<N) and (0<=nx<M):
+                if graph[ny][nx]==1 or out_visited[ny][nx]: continue
+                queue.append((ny,nx))
+                graph[ny][nx]= -1
+                out_visited[ny][nx] = True
+    return
 
-        for cx in range(N):
-            for cy in range(M):
-                    
-                surface=0
-                    
-                if graph[cx][cy]==1:
-                    
-                    end_point = True
-                        
-                    for i in range(4):
-                        
-                        ax = cx+dx[i]
-                        ay = cy+dy[i]
-                            
-                        if (0<=ax<N) and (0<=ay<M):
-                            
-                            if graph[ax][ay]==3:
-                                surface+= 1
-                    if surface >= 2:
-                        melted.append((cx,cy))
-        if not end_point:
-            break
-            
-        for x,y in melted:
-            graph[x][y]=0
-                
-                
-        ans+=1
-    return ans
+def isMelt():
+    for i in range(N):
+        for j in range(M):
+            if graph[i][j]== 1:
+                return False
+    return True
 
-print(bfs(graph))
+
+while not isMelt():
+    outside()
+    check=[]
+    
+    for i in range(N):
+        for j in range(M):
+            if graph[i][j] == 1:
+                cnt=0
+                for k in range(4):
+                    ny= dy[k]+i
+                    nx= dx[k]+j
+                    if (0<=ny<N) and (0<=nx<M):
+                        if graph[ny][nx] == -1:
+                            cnt+=1
+                if cnt>=2:
+                    check.append([i,j])
+    for y,x in check:
+        graph[y][x] = 0
+    answer+=1
+
+print(answer)
