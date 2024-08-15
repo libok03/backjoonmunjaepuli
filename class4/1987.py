@@ -23,8 +23,6 @@
 
 import sys
 input = sys.stdin.readline
-from collections import deque
-
 
 # 가로세로 길이 받아주기
 R, C = map(int,input().split())
@@ -36,24 +34,35 @@ for _ in range(R):
     graph.append(str(input()))
     
 
-def bfs(graph):
-    dx=[1,-1,0,0]
-    dy=[0,0,1,-1]
-    queue = deque()
-    queue.append((0,0,set(graph[0][0])))
-    max_leng=0
-    while queue:
-        cy, cx, track = queue.popleft()
-        for i in range(4):
-            ax=cx+dx[i]
-            ay=cy+dy[i]
-            if (0<=ax<C) and (0<=ay<R):
-                if graph[ay][ax] not in track: 
-                    new_track = track | {graph[ay][ax]}
-                    queue.append((ay,ax,new_track))
-                    max_leng=max(max_leng,len(new_track))
-    return max_leng
+# ans 0으로 두고
+ans = 0
+# set을 만들어경로에추가 하기위한도구로
+alphas=set()
+dx=[1,-1,0,0]
+dy=[0,0,1,-1]
 
-print(bfs(graph))
+# 미뤄왔던 DFS구현
+def dfs(x,y,count):
+    global ans
     
+    # 매 DFS마다 ans 최신화
+    ans= max(ans, count)
+    
+    for i in range(4):
+        nx = x+dx[i]
+        ny = y+dy[i]
         
+        # 조건에 맞을때
+        if 0<= nx< R and 0<=ny< C and not graph[nx][ny] in alphas:
+            # alpha에 더해주고
+            alphas.add(graph[nx][ny])
+            # DFS돌리기
+            dfs(nx,ny,count+1)
+            # 다른경우도 살펴 보기 위해서 remove해줌
+            alphas.remove(graph[nx][ny])
+
+alphas.add(graph[0][0])
+dfs(0,0,1)
+print(ans)
+        
+# BFS쓰면 메모리 초과 DFS쓰면시간 초과 어쩌라는거지? 
