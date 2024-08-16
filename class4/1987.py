@@ -23,6 +23,7 @@
 
 import sys
 input = sys.stdin.readline
+sys.setrecursionlimit(10000)
 
 # 가로세로 길이 받아주기
 R, C = map(int,input().split())
