@@ -22,6 +22,8 @@
 
 from collections import deque
 
+
+# 입력 받아주기
 n, m = map(int, input().split())
 graph = []
 
@@ -36,16 +38,17 @@ for i in range(n):
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 
-
+# BFS함수 만들기
 def bfs(x, y, z):
     queue = deque()
     queue.append((x, y, z))
-
+    # queue가 존재하는 동안
     while queue:
         a, b, c = queue.popleft()
         # 끝 점에 도달하면 이동 횟수를 출력
         if a == n - 1 and b == m - 1:
             return visited[a][b][c]
+        # 상하 좌우 디비기
         for i in range(4):
             nx = a + dx[i]
             ny = b + dy[i]
